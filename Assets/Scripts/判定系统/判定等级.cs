@@ -7,7 +7,7 @@ public class 判定等级 : ScriptableObject
     [LabelWidth(80)]
     public string 名称;
     
-    [LabelText("判定区间(ms)")][MinMaxSlider(0, 200, true)][ShowInInspector] 
+    [LabelText("判定区间(ms)")][MinMaxSlider(0, 1000, true)][ShowInInspector] 
     private Vector2Int 区间 = new Vector2Int(0, 0);
 
     
