@@ -9,8 +9,8 @@ public class SpaceKeyTracker : MonoBehaviour
     public TMP_Text resultLabel;
 
     int targetDuration;
-    float roundStartTime;
-    float pressStartTime;
+    float roundStartTimeMs;
+    float pressStartTimeMs;
     bool isPressing;
     bool waiting;
 
@@ -23,7 +23,7 @@ public class SpaceKeyTracker : MonoBehaviour
     {
         waiting = true;
         isPressing = false;
-        roundStartTime = Time.time;
+        roundStartTimeMs = Time.time * 1000f;
         resultLabel.text = "";
 
         if (Random.value < 0.5f)
@@ -42,21 +42,21 @@ public class SpaceKeyTracker : MonoBehaviour
     {
         if (waiting)
         {
-            resultLabel.text = $"反应时间：{Time.time - roundStartTime:F1} 秒";
+            resultLabel.text = $"反应时间：{Time.time * 1000f - roundStartTimeMs:F0} ms";
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && waiting)
         {
-            pressStartTime = Time.time;
+            pressStartTimeMs = Time.time * 1000f;
             isPressing = true;
             waiting = false;
         }
 
         if (isPressing)
         {
-            float held = Time.time - pressStartTime;
+            float heldMs = Time.time * 1000f - pressStartTimeMs;
             if (targetDuration > 0)
-                resultLabel.text = $"按住中：{held:F1} / {targetDuration} 秒";
+                resultLabel.text = $"按住中：{heldMs:F0} / {targetDuration * 1000f} ms";
             else
                 resultLabel.text = "松开！";
         }
@@ -64,14 +64,13 @@ public class SpaceKeyTracker : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space) && isPressing)
         {
             isPressing = false;
-            float duration = Time.time - pressStartTime;
-            float reactionTime = pressStartTime - roundStartTime;
+            float durationMs = Time.time * 1000f - pressStartTimeMs;
+            float reactionTimeMs = pressStartTimeMs - roundStartTimeMs;
             string grade = "Miss";
-            float 延迟 = reactionTime * 1000f;
 
-            grade = 判定.抉择(延迟).名称;
+            grade = 判定.抉择(reactionTimeMs).名称;
 
-            resultLabel.text = $"<color={ColorForGrade(grade)}>{grade}！反应 {reactionTime:F2}s + 按住 {duration:F2}s</color>";
+            resultLabel.text = $"<color={ColorForGrade(grade)}>{grade}！反应 {reactionTimeMs:F0}ms + 按住 {durationMs:F0}ms</color>";
 
             StartCoroutine(WaitAndNext(1.5f));
         }
@@ -80,7 +79,7 @@ public class SpaceKeyTracker : MonoBehaviour
     string ColorForGrade(string grade) => grade switch
     {
         "Perfect" => "green",
-        "Great" => "cyan",
+        "Great" => "blue",
         "Okay" => "yellow",
         _ => "red"
     };

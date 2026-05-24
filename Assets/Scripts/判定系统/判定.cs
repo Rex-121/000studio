@@ -16,10 +16,8 @@ namespace 判定系统
 
             foreach (var 等级 in main.判定等级)
             {
-                if (等级.判定(reactionMs))
-                {
-                    return 等级;
-                }
+                if (!等级.判定(reactionMs)) continue;
+                return 等级;
             }
 
             return main.miss;
